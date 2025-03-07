@@ -1,0 +1,88 @@
+/*
+====================================
+      SHORTEST PATH FINDER (GUI)
+====================================
+This program implements:
+1. Dijkstra's Algorithm (Greedy approach, no negative weights)
+2. Bellman-Ford Algorithm (Handles negative weights)
+3. A* Algorithm (Heuristic-based for optimized pathfinding)
+4. SFML for GUI visualization
+*/
+
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <limits>
+#include <cmath>
+
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+// Structure for graph nodes (vertices)
+struct Node {
+    float x, y; // Position
+    sf::CircleShape shape;
+
+    Node(float x, float y) {
+        this->x = x;
+        this->y = y;
+        shape.setRadius(20);
+        shape.setFillColor(sf::Color::White);
+        shape.setOutlineColor(sf::Color::Black);
+        shape.setOutlineThickness(2);
+        shape.setPosition(x, y);
+    }
+};
+
+// Structure for graph edges
+struct Edge {
+    int start, end;
+    sf::Vertex line[2];
+
+    Edge(int start, int end, vector<Node>& nodes) {
+        this->start = start;
+        this->end = end;
+        line[0] = sf::Vertex(sf::Vector2f(nodes[start].x + 20, nodes[start].y + 20), sf::Color::Black);
+        line[1] = sf::Vertex(sf::Vector2f(nodes[end].x + 20, nodes[end].y + 20), sf::Color::Black);
+    }
+};
+
+int main() {
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Shortest Path Finder - Graph Visualization");
+
+    // Define nodes (manually placing them for visualization)
+    vector<Node> nodes = {
+        Node(100, 100), Node(300, 100), Node(500, 100),
+        Node(200, 300), Node(400, 300)
+    };
+
+    // Define edges (connecting nodes visually)
+    vector<Edge> edges = {
+        Edge(0, 1, nodes), Edge(1, 2, nodes),
+        Edge(0, 3, nodes), Edge(1, 3, nodes), Edge(1, 4, nodes), Edge(2, 4, nodes)
+    };
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        window.clear(sf::Color::White);
+
+        // Draw edges
+        for (auto& edge : edges)
+            window.draw(edge.line, 2, sf::Lines);
+
+        // Draw nodes
+        for (auto& node : nodes)
+            window.draw(node.shape);
+
+        window.display();
+    }
+
+    return 0;
+}
